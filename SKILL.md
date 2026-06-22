@@ -18,6 +18,22 @@ any profile, any platform. The runtime already loads `~/.hermes/SOUL.md` every
 turn via `agent/prompt_builder.py:load_soul_md()`. This skill adds the **lint
 + portability layer** so the discipline can be shared.
 
+## How it works (architecture)
+
+There are **two separate pieces** that together produce the preflight workflow:
+
+1. **`~/.hermes/SOUL.md`** — the **runtime contract**. Loaded every turn by `agent/prompt_builder.py:load_soul_md()` and injected as the first slot of the system prompt. This is what makes the 🛡️ preflight block appear at the start of every response, enforces the APPROVE gate, and defines the persona.
+
+2. **This skill (`~/.hermes/skills/hermes/hermes-preflight/`)** — the **documentation + lint package**. Auto-discovered by Hermes as context. This teaches the agent *about* the protocol and provides the validator to check SOUL.md compliance.
+
+| Install combination | Result |
+|---------------------|--------|
+| Skill only | Agent *knows about* the protocol (can read SKILL.md) but does not *enforce* it. No 🛡️ block. Docs without behavior. |
+| SOUL.md only | Agent follows the protocol and emits the block. No docs/validator/templates available locally. |
+| **Both (recommended)** | Full experience: runtime discipline + docs + validator. Use `bash install.sh` from the repo root. |
+
+The validator (`scripts/validate_preflight.py`) checks that `~/.hermes/SOUL.md` contains all the required sections, the preflight block, the critical APPROVE rule, and the state machine. It does not check the skill itself — the skill is just docs.
+
 ## When to Use
 
 Load this skill when:

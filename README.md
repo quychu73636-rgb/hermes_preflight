@@ -22,22 +22,35 @@ The runtime already loads `~/.hermes/SOUL.md` every turn. This skill adds the
 
 ## Install
 
-### From this repo
+The skill is a **two-part install**: the SOUL.md template gives you the runtime workflow (the 🛡️ block, the APPROVE gate, the state machine); the skill directory gives you the docs + validator. **Do both.**
+
+### Quick install (recommended)
 
 ```bash
 # Clone
-git clone https://github.com/your-org/hermes-preflight-skill.git
-cd hermes-preflight-skill
+git clone https://github.com/quychu73636-rgb/hermes_preflight.git
+cd hermes_preflight
 
-# Option A: Install the skill
+# One-liner: copies SOUL.md template + installs skill + runs validator
+bash install.sh
+
+# Restart Hermes (or start a new session) for SOUL.md to take effect
+```
+
+### Manual install (step by step)
+
+```bash
+# Step 1: Install the SOUL.md template (this is what makes the workflow run)
+cp templates/SOUL.md ~/.hermes/SOUL.md
+
+# Step 2: Install the skill (gives you docs + validator)
 mkdir -p ~/.hermes/skills/hermes
 cp -r . ~/.hermes/skills/hermes/hermes-preflight/
 
-# Option B: Use the full template as your SOUL.md (replace existing)
-cp templates/SOUL.md ~/.hermes/SOUL.md
-
-# Verify
+# Step 3: Verify the install
 python3 ~/.hermes/skills/hermes/hermes-preflight/scripts/validate_preflight.py ~/.hermes/SOUL.md
+
+# Step 4: Restart Hermes (or start a new session)
 ```
 
 ### From upstream Nous Research hermes-agent (when PR is merged)
@@ -46,7 +59,25 @@ python3 ~/.hermes/skills/hermes/hermes-preflight/scripts/validate_preflight.py ~
 # After PR lands, the skill will be available as:
 #   optional-skills/hermes/hermes-preflight/
 # Hermes will auto-discover it on next session start.
+# The SOUL.md template still needs to be copied manually from this repo
+# (or from the upstream skill's templates/ directory).
 ```
+
+## Differences from the source author's setup
+
+This skill was extracted from a **production SOUL.md** that has been refined through months of real use. That production file includes everything in `templates/SOUL.md` **plus** user-specific customizations that don't belong in a generic template:
+
+- A specific persona voice (e.g. terse, reliability-obsessed, "if-this-then-that" over data dumps)
+- Project context (active strategies, account sizes, file paths, verifier preferences)
+- Model + TTS + provider preferences
+- Communication-style corrections accumulated over many sessions
+- Tool quirks and environment-specific gotchas
+
+These live in `~/.hermes/agentmemory/` (the MEMORY + USER PROFILE blocks) and in custom skills — **not** in the SOUL.md template. Installing this skill gives you **the methodology** (preflight protocol, state machine, delivery checklist, no-tweak clause). It does **not** give you **the author's specific context**.
+
+After installing, your agent will follow the same process discipline. It will not know about your trading strategies, your model preferences, or your past corrections. Those accumulate in your own `agentmemory` over time as you use the system.
+
+**Bottom line:** the template is a starting point. Customize the Persona / How I think / How I communicate sections of `~/.hermes/SOUL.md` to match your voice. The methodology stays the same; the context is yours.
 
 ## Quick start
 
